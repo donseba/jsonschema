@@ -2,6 +2,7 @@ package jsonschema
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/url"
@@ -13,6 +14,18 @@ import (
 
 	"github.com/stretchr/testify/require"
 )
+
+const (
+	StringEnumOne   StringEnum = "one"
+	StringEnumTwo   StringEnum = "two"
+	StringEnumThree StringEnum = "three"
+)
+
+type StringEnum string
+
+func (se StringEnum) Enum() []interface{} {
+	return []interface{}{StringEnumOne, StringEnumTwo, StringEnumThree}
+}
 
 type GrandfatherType struct {
 	FamilyName string `json:"family_name" jsonschema:"required"`
@@ -68,8 +81,8 @@ type TestUser struct {
 	IPAddress net.IP    `json:"network_address,omitempty"`
 
 	// Tests for RFC draft-wright-json-schema-hyperschema-00, section 4
-	Photo []byte `json:"photo,omitempty" jsonschema:"required"`
-	Photo2 Bytes `json:"photo2,omitempty" jsonschema:"required"`
+	Photo  []byte `json:"photo,omitempty" jsonschema:"required"`
+	Photo2 Bytes  `json:"photo2,omitempty" jsonschema:"required"`
 
 	// Tests for jsonpb enum support
 	Feeling ProtoEnum `json:"feeling,omitempty"`
@@ -83,6 +96,9 @@ type TestUser struct {
 	Color      string  `json:"color" jsonschema:"enum=red,enum=green,enum=blue"`
 	Rank       int     `json:"rank,omitempty" jsonschema:"enum=1,enum=2,enum=3"`
 	Multiplier float64 `json:"mult,omitempty" jsonschema:"enum=1.0,enum=1.5,enum=2.0"`
+
+	// Test for enumerator interface
+	StringEnum StringEnum `json:"string_enum,omitempty"`
 }
 
 type CustomTime time.Time
@@ -175,4 +191,5 @@ func TestBaselineUnmarshal(t *testing.T) {
 	actualJSON, _ := json.MarshalIndent(actualSchema, "", "  ")
 
 	require.Equal(t, strings.Replace(string(expectedJSON), `\/`, "/", -1), string(actualJSON))
+	fmt.Println(string(actualJSON))
 }

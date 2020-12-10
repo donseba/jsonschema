@@ -23,6 +23,10 @@ import (
 // RFC draft-wright-json-schema-00, section 6
 var Version = "http://json-schema.org/draft-04/schema#"
 
+type (
+	Enumerator interface{ Enum() []interface{} }
+)
+
 // Schema is the root schema.
 // RFC draft-wright-json-schema-00, section 4.5
 type Schema struct {
@@ -174,6 +178,7 @@ var (
 	timeType = reflect.TypeOf(time.Time{}) // date-time RFC section 7.3.1
 	ipType   = reflect.TypeOf(net.IP{})    // ipv4 and ipv6 RFC section 7.3.4, 7.3.5
 	uriType  = reflect.TypeOf(url.URL{})   // uri RFC section 7.3.6
+	enumType = reflect.TypeOf((*Enumerator)(nil)).Elem()
 )
 
 // Byte slices will be encoded as base64
@@ -204,6 +209,17 @@ func (r *Reflector) reflectTypeToSchema(definitions Definitions, t reflect.Type)
 	if r.TypeMapper != nil {
 		if t := r.TypeMapper(t); t != nil {
 			return t
+		}
+	}
+
+	if t.Implements(enumType) || (t.Kind() == reflect.Ptr && t.Elem().Implements(enumType)) {
+		if t.Kind() == reflect.Ptr {
+			return &Type{
+				Enum: reflect.New(t.Elem()).Interface().(Enumerator).Enum(),
+			}
+		}
+		return &Type{
+			Enum: reflect.New(t).Interface().(Enumerator).Enum(),
 		}
 	}
 

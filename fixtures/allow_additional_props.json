@@ -156,6 +156,13 @@
             2
           ],
           "type": "number"
+        },
+        "string_enum": {
+          "enum": [
+            "one",
+            "two",
+            "three"
+          ]
         }
       },
       "additionalProperties": true,

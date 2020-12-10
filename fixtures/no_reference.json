@@ -148,6 +148,13 @@
         2
       ],
       "type": "number"
+    },
+    "string_enum": {
+      "enum": [
+        "one",
+        "two",
+        "three"
+      ]
     }
   },
   "additionalProperties": false,
@@ -315,6 +322,13 @@
             2
           ],
           "type": "number"
+        },
+        "string_enum": {
+          "enum": [
+            "one",
+            "two",
+            "three"
+          ]
         }
       },
       "additionalProperties": false,
