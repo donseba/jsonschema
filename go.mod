@@ -1,4 +1,4 @@
-module github.com/alecthomas/jsonschema
+module github.com/donseba/jsonschema
 
 go 1.12
 
